@@ -1,0 +1,314 @@
+import os
+
+akun = {
+    "nurul": {"password": "94", "role": "admin"}
+}
+
+data_hewan = {
+    1: {
+        "nama": "gajah",
+        "tempat hidup": "hutan",
+        "makanan": "buah",
+        "golongan": "mamalia",
+        "deskripsi": "mamalia terbesar yang memiliki belalai"
+    },
+    2: {
+        "nama": "kelinci",
+        "tempat hidup": "darat",
+        "makanan": "rumput",
+        "golongan": "mamalia",
+        "deskripsi": "hewan bertelinga panjang"
+    }
+}
+
+id_berikutnya = 3
+
+def menu_utama():
+    print("===== SISTEM PENDATAAN HEWAN =====")
+    print("1. Login")
+    print("2. Register")
+    print("3. Keluar")
+
+
+def hitung_hewan():
+    jumlah = len(data_hewan)
+    print("Jumlah data hewan:", jumlah)
+
+def cari_hewan(id_hewan):
+    return data_hewan.get(id_hewan)
+
+
+def tampilkan_data(index=0):
+    daftar_id = list(data_hewan.keys())
+
+    # Kondisi berhenti rekursi
+    if index >= len(daftar_id):
+        return
+
+    id_hewan = daftar_id[index]
+    hewan = data_hewan[id_hewan]
+
+    print("-" * 40)
+    print("ID           :", id_hewan)
+    print("Nama         :", hewan["nama"])
+    print("Tempat hidup :", hewan["tempat hidup"])
+    print("Makanan      :", hewan["makanan"])
+    print("Golongan     :", hewan["golongan"])
+    print("Deskripsi    :", hewan["deskripsi"])
+
+    tampilkan_data(index + 1)
+
+def tambah_hewan():
+    global id_berikutnya
+
+    print("===== TAMBAH DATA HEWAN =====")
+
+    nama = input("Nama hewan: ").strip()
+    tempat = input("Tempat hidup: ").strip()
+    makanan = input("Jenis makanan: ").strip()
+    golongan = input("Golongan hewan: ").strip()
+    deskripsi = input("Deskripsi: ").strip()
+
+    if (nama == "" or tempat == "" or makanan == ""
+            or golongan == "" or deskripsi == ""):
+        print("Error: Semua data wajib diisi.")
+        return
+
+    data_hewan[id_berikutnya] = {
+        "nama": nama,
+        "tempat hidup": tempat,
+        "makanan": makanan,
+        "golongan": golongan,
+        "deskripsi": deskripsi
+    }
+
+    id_berikutnya += 1
+
+    print("Data hewan berhasil ditambahkan.")
+
+def hapus_hewan():
+    print("===== HAPUS DATA HEWAN =====")
+
+    if len(data_hewan) == 0:
+        print("Belum ada data hewan.")
+        return
+
+    tampilkan_data()
+
+    id_input = input("Masukkan ID hewan yang dihapus: ").strip()
+
+    try:
+        id_hapus = int(id_input)
+
+        if id_hapus not in data_hewan:
+            raise ValueError("ID hewan tidak ditemukan.")
+
+    except ValueError as error:
+        print("Error:", error)
+
+    else:
+        konfirmasi = input(
+            "Yakin menghapus data ini? (y/t): "
+        ).strip().lower()
+
+        if konfirmasi == "y":
+            del data_hewan[id_hapus]
+            print("Data hewan berhasil dihapus.")
+        else:
+            print("Penghapusan dibatalkan.")
+
+    finally:
+        print("Proses penghapusan selesai.")
+
+
+
+while True:
+    os.system("cls" if os.name == "nt" else "clear")
+
+    menu_utama()
+
+    pilihan = input("Pilih menu [1-3]: ").strip()
+
+    if pilihan == "1":
+        username = input("Username: ").strip()
+        password = input("Password: ").strip()
+
+        data_user = akun.get(username)
+
+        if data_user is None or data_user["password"] != password:
+            print("Username atau password salah.")
+            input("Tekan Enter untuk melanjutkan.")
+
+        else:
+            role = data_user["role"]
+            print("Login berhasil.")
+            input("Tekan Enter untuk melanjutkan.")
+
+
+            if role == "admin":
+                while True:
+                    os.system(
+                        "cls" if os.name == "nt" else "clear"
+                    )
+
+                    print("===== MENU ADMIN =====")
+                    print("1. Tambah data hewan")
+                    print("2. Tampilkan data hewan")
+                    print("3. Ubah data hewan")
+                    print("4. Hapus data hewan")
+                    print("5. Logout")
+
+                    menu = input("Pilih menu: ").strip()
+
+                    if menu == "1":
+                        tambah_hewan()
+
+                    elif menu == "2":
+                        if len(data_hewan) == 0:
+                            print("Belum ada data hewan.")
+                        else:
+                            tampilkan_data()
+
+                    elif menu == "3":
+                        tampilkan_data()
+
+                        id_input = input(
+                            "Masukkan ID hewan yang diubah: "
+                        ).strip()
+
+                        try:
+                            id_ubah = int(id_input)
+
+                            hewan = cari_hewan(id_ubah)
+
+                            if hewan is None:
+                                raise ValueError(
+                                    "ID hewan tidak ditemukan."
+                                )
+
+                        except ValueError as error:
+                            print("Error:", error)
+
+                        else:
+                            nama = input(
+                                "Nama baru (kosongkan jika tetap): "
+                            ).strip()
+
+                            tempat = input(
+                                "Tempat hidup baru: "
+                            ).strip()
+
+                            makanan = input(
+                                "Jenis makanan baru: "
+                            ).strip()
+
+                            golongan = input(
+                                "Golongan baru: "
+                            ).strip()
+
+                            deskripsi = input(
+                                "Deskripsi baru: "
+                            ).strip()
+
+                            if nama != "":
+                                hewan["nama"] = nama
+
+                            if tempat != "":
+                                hewan["tempat hidup"] = tempat
+
+                            if makanan != "":
+                                hewan["makanan"] = makanan
+
+                            if golongan != "":
+                                hewan["golongan"] = golongan
+
+                            if deskripsi != "":
+                                hewan["deskripsi"] = deskripsi
+
+                            print("Data hewan berhasil diubah.")
+
+                        finally:
+                            print("Proses pengubahan selesai.")
+
+                    elif menu == "4":
+                        hapus_hewan()
+
+                    elif menu == "5":
+                        print("Berhasil logout.")
+                        break
+
+                    else:
+                        print("Pilihan tidak tersedia.")
+
+                    input("Tekan Enter untuk melanjutkan.")
+
+            elif role == "pengguna":
+                while True:
+                    os.system(
+                        "cls" if os.name == "nt" else "clear"
+                    )
+
+                    print("===== MENU PENGGUNA =====")
+                    print("1. Tampilkan data hewan")
+                    print("2. logout")
+
+                    menu = input("Pilih menu: ").strip()
+
+                    if menu == "1":
+                        if len(data_hewan) == 0:
+                            print("Belum ada data hewan")
+                        else:
+                            tampilkan_data()
+
+                    elif menu == "2":
+                        print("Berhasil logout.")
+                        break
+
+                    else:
+                        print("Pilihan tidak tersedia.")
+
+                    input("Tekan Enter untuk melanjutkan.")
+
+    elif pilihan == "2":
+        print("===== REGISTER =====")
+
+        username = input("Buat username: ").strip()
+
+        if username == "":
+            print("Error: Username tidak boleh kosong.")
+
+        elif username in akun:
+            print("Error: Username sudah digunakan.")
+
+        else:
+            password = input("Buat password: ").strip()
+
+            try:
+                if len(password) < 5:
+                    raise ValueError(
+                        "Password minimal 5 karakter."
+                    )
+
+            except ValueError as error:
+                print("Error:", error)
+
+            else:
+                akun[username] = {
+                    "password": password,
+                    "role": "pengguna"
+                }
+
+                print("Registrasi berhasil.")
+
+            finally:
+                print("Proses registrasi selesai.")
+
+        input("Tekan Enter untuk melanjutkan.")
+
+    elif pilihan == "3":
+        print("Terima kasih telah menggunakan program.")
+        break
+
+    else:
+        print("Pilihan tidak tersedia.")
+        input("Tekan Enter untuk melanjutkan.")
